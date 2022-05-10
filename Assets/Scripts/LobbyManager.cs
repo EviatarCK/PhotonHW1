@@ -1,19 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//using Photon.Pun;
+using UnityEngine.UI;
+using Photon.Pun;
+using Photon.Realtime;
 
-public class LobbyManager : MonoBehaviour
+public class LobbyManager : MonoBehaviourPunCallbacks
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private Text _roomList;
+    [SerializeField] private InputField _roomToCreate;
+
+    private void Start()
     {
-        
+        PhotonNetwork.ConnectUsingSettings();
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void OnConnectedToMaster()
     {
-        
+        base.OnConnectedToMaster();
+        Debug.Log("Connected to master room.");
+
+        PhotonNetwork.JoinLobby();
+    }
+
+    public override void OnJoinedLobby()
+    {
+        base.OnJoinedLobby();
+        Debug.Log("Joined lobby.");
+
+        UICreateRoom();
+    }
+
+    public void UICreateRoom()
+    {
+        string roomName = _roomToCreate.text;
+        PhotonNetwork.CreateRoom(roomName);
+        _roomList.text += roomName + ",";
     }
 }
